@@ -516,14 +516,17 @@ async function addStudent() {
             // Reset form
             document.getElementById('addStudentForm')?.reset();
             
-            // Refresh all data
-            await loadStudentsList();
-            await loadLeaderboard();
-            await loadBatchAnalytics();
-            await updateStudentCount();
-            
-            // Switch to students view to show the new student
-            switchView('students');
+            // Refresh all data in background (without switching views)
+            Promise.all([
+                loadStudentsList(),
+                loadLeaderboard(),
+                loadBatchAnalytics(),
+                updateStudentCount()
+            ]).then(() => {
+                console.log('All data refreshed after adding student');
+            }).catch(error => {
+                console.error('Error refreshing data:', error);
+            });
             
         } else {
             showToast(data.error || 'Failed to add student', 'error');
