@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntegrityAI | Deep Learning Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: #6366f1; transform: translateX(-4px); }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.08));
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .hero-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .ai-icon {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-top: 1rem; }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+        .stat-value { font-size: 1.8rem; font-weight: 700; }
+        .stat-label { font-size: 0.7rem; color: #64748b; margin-top: 0.25rem; }
+        .skill-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        
+        .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .insight-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 1rem;
+            border-left: 3px solid #6366f1;
+        }
+        .insight-card.warning { border-left-color: #f59e0b; }
+        .insight-card.success { border-left-color: #10b981; }
+        .insight-card.achievement { border-left-color: #ffd700; }
+        .insight-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .insight-title { font-weight: 600; margin-bottom: 0.25rem; }
+        .insight-message { font-size: 0.8rem; color: #94a3b8; }
+        
+        .topics-section, .recommendations-section, .study-plan-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        h3 { font-size: 0.9rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .topics-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .topic-chip { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; background: rgba(255,255,255,0.05); }
+        .topic-chip.weak { background: rgba(239,68,68,0.15); color: #f87171; }
+        .topic-chip.strong { background: rgba(16,185,129,0.15); color: #34d399; }
+        
+        .topic-recommendations { margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 12px; }
+        .topic-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .topic-name { font-weight: 600; color: #818cf8; }
+        .problem-count { font-size: 0.7rem; color: #64748b; }
+        .problem-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 0.5rem; }
+        .problem-item:hover { background: rgba(255,255,255,0.05); transform: translateX(4px); }
+        .problem-difficulty { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 12px; min-width: 60px; text-align: center; }
+        .problem-difficulty.easy { background: rgba(16,185,129,0.15); color: #10b981; }
+        .problem-difficulty.medium { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .problem-difficulty.hard { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .problem-name { flex: 1; color: #f1f5f9; text-decoration: none; font-size: 0.85rem; }
+        .problem-name:hover { color: #818cf8; }
+        .problem-reason { font-size: 0.7rem; color: #64748b; margin-top: 0.25rem; margin-left: 2rem; }
+        
+        .schedule-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .schedule-day { font-weight: 600; min-width: 80px; font-size: 0.8rem; }
+        .schedule-task { flex: 1; font-size: 0.8rem; }
+        
+        .empty-state { text-align: center; padding: 3rem; }
+        .empty-state i { font-size: 3rem; color: #6366f1; opacity: 0.5; margin-bottom: 1rem; }
+        .loading-container { display: flex; justify-content: center; align-items: center; min-height: 400px; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(99,102,241,0.2); border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <div id="integrityContent"><div class="loading-container"><div class="spinner"></div><p style="margin-left:1rem">Loading IntegrityAI analysis...</p></div></div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const roll = urlParams.get('roll');
+        
+        if (!roll) {
+            document.getElementById('integrityContent').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>No Student Selected</h3><p>Please go back and select a student first.</p><a href="/" class="back-btn" style="display:inline-flex; margin-top:1rem;">Go to Dashboard</a></div>`;
+        } else {
+            loadIntegrityAnalysis(roll);
+        }
+        
+        async function loadIntegrityAnalysis(roll) {
+            try {
+                const response = await fetch(`/api/integrity-ai/${encodeURIComponent(roll)}`);
+                const data = await response.json();
+                if (data.error) {
+                    document.getElementById('integrityContent').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>${data.error}</p></div>`;
+                } else {
+                    displayDashboard(data);
+                }
+            } catch (error) {
+                document.getElementById('integrityContent').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Connection Error</h3><p>Unable to load analysis. Please try again.</p></div>`;
+            }
+        }
+        
+        function displayDashboard(data) {
+            const weakHtml = (data.topics.weak || []).map(t => `<span class="topic-chip weak">⚠️ ${escapeHtml(t)}</span>`).join('');
+            const strongHtml = (data.topics.strong || []).map(t => `<span class="topic-chip strong">✅ ${escapeHtml(t)}</span>`).join('');
+            
+            let recHtml = '';
+            for (const [topic, problems] of Object.entries(data.recommendations)) {
+                if (problems.length) {
+                    recHtml += `<div class="topic-recommendations">
+                        <div class="topic-header"><span class="topic-name">📚 ${escapeHtml(topic)}</span><span class="problem-count">${problems.length} problems</span></div>
+                        ${problems.map(p => `<div class="problem-item"><span class="problem-difficulty ${p.difficulty.toLowerCase()}">${p.difficulty}</span><a href="${p.url}" target="_blank" class="problem-name">${p.id}. ${escapeHtml(p.name)}</a></div><div class="problem-reason">💡 ${escapeHtml(p.reason)}</div>`).join('')}
+                    </div>`;
+                }
+            }
+            
+            let scheduleHtml = '';
+            for (const item of data.study_plan.weekly_schedule) {
+                scheduleHtml += `<div class="schedule-item"><div class="schedule-day">${item.day}</div><div class="schedule-task">${item.task} (${item.problems} problems)</div></div>`;
+            }
+            
+            let insightsHtml = '';
+            for (const insight of data.insights) {
+                insightsHtml += `<div class="insight-card ${insight.type}"><div class="insight-icon">${insight.icon}</div><div class="insight-title">${escapeHtml(insight.title)}</div><div class="insight-message">${escapeHtml(insight.message)}</div></div>`;
+            }
+            
+            document.getElementById('integrityContent').innerHTML = `
+                <div class="hero-section">
+                    <div class="hero-header">
+                        <div class="ai-icon"><i class="fas fa-brain"></i></div>
+                        <div><h2>IntegrityAI Deep Analysis</h2><p>Personalized insights for <strong>${escapeHtml(data.student_name)}</strong> (${escapeHtml(data.roll)})</p></div>
+                        <div class="skill-badge" style="background:${data.stats.level_color}20; color:${data.stats.level_color}">${data.stats.level_icon} ${data.stats.skill_level}</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-value">${data.stats.total}</div><div class="stat-label">Total Solved</div></div>
+                        <div class="stat-card"><div class="stat-value">${data.stats.easy}</div><div class="stat-label">Easy</div></div>
+                        <div class="stat-card"><div class="stat-value">${data.stats.medium}</div><div class="stat-label">Medium</div></div>
+                        <div class="stat-card"><div class="stat-value">${data.stats.hard}</div><div class="stat-label">Hard</div></div>
+                        <div class="stat-card"><div class="stat-value">${data.stats.mastery_percentage}%</div><div class="stat-label">Mastery</div></div>
+                    </div>
+                </div>
+                <div class="insights-grid">${insightsHtml}</div>
+                <div class="topics-section"><h3><i class="fas fa-exclamation-triangle"></i> Areas for Improvement</h3><div class="topics-chips">${weakHtml || '<span class="topic-chip">None identified</span>'}</div>${strongHtml ? `<h3 style="margin-top:1rem"><i class="fas fa-star"></i> Your Strengths</h3><div class="topics-chips">${strongHtml}</div>` : ''}</div>
+                <div class="recommendations-section"><h3><i class="fas fa-lightbulb"></i> Smart Recommendations (${data.total_recommendations} problems)</h3>${recHtml || '<div class="empty-state">No recommendations available</div>'}</div>
+                <div class="study-plan-section"><h3><i class="fas fa-calendar-week"></i> Personalized Study Plan</h3><div class="weekly-schedule"><div class="schedule-item"><div class="schedule-day">Daily Goal</div><div class="schedule-task">${data.study_plan.daily_goal}</div></div><div class="schedule-item"><div class="schedule-day">Weekly Target</div><div class="schedule-task">${data.study_plan.weekly_target}</div></div><div class="schedule-item"><div class="schedule-day">Focus Area</div><div class="schedule-task">${data.study_plan.focus_area}</div></div>${scheduleHtml}</div></div>
+            `;
+        }
+        
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>
