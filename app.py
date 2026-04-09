@@ -797,6 +797,101 @@ def integrity_ai_analysis(roll):
 
 load_question_bank()
 
+###########################################################################################
+# ===============================
+# 📊 ACCEPTANCE RATE API
+@app.route('/api/student/acceptance/<roll>')
+def get_acceptance_rate(roll):
+    """Get acceptance rate matching LeetCode's official calculation"""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT leetcode_ids FROM students WHERE roll=?', (roll,))
+        row = c.fetchone()
+        conn.close()
+        
+        if not row:
+            return jsonify({'error': 'Student not found'}), 404
+        
+        leetcode_ids = json.loads(row[0]) if row[0] else []
+        
+        acceptance_data = []
+        
+        for username in leetcode_ids[:1]:
+            url = "https://leetcode.com/graphql"
+            
+            query = {
+                "query": """
+                query getUserProfile($username: String!) {
+                    matchedUser(username: $username) {
+                        submitStats: submitStatsGlobal {
+                            acSubmissionNum {
+                                difficulty
+                                count
+                                submissions
+                            }
+                            totalSubmissionNum {
+                                difficulty
+                                count
+                                submissions
+                            }
+                        }
+                    }
+                }
+                """,
+                "variables": {"username": username}
+            }
+            
+            response = requests.post(url, json=query, headers={"Content-Type": "application/json"}, timeout=10)
+            data = response.json()
+            
+            if data and "data" in data and data["data"]["matchedUser"]:
+                ac_stats = data["data"]["matchedUser"]["submitStats"]["acSubmissionNum"]
+                total_stats = data["data"]["matchedUser"]["submitStats"]["totalSubmissionNum"]
+                
+                # Create a map for total submissions by difficulty
+                total_map = {}
+                for item in total_stats:
+                    total_map[item["difficulty"]] = item.get("submissions", 0)
+                
+                for item in ac_stats:
+                    difficulty = item["difficulty"]
+                    if difficulty == "All":
+                        continue  # Skip "All" category
+                    
+                    accepted = item.get("submissions", 0)      # Total accepted submissions
+                    solved_unique = item["count"]               # Unique problems solved
+                    total = total_map.get(difficulty, 0)        # Total submissions
+                    
+                    acceptance_rate = round((accepted / total * 100), 1) if total > 0 else 0
+                    
+                    acceptance_data.append({
+                        'difficulty': difficulty,
+                        'solved': solved_unique,
+                        'accepted_submissions': accepted,
+                        'total_submissions': total,
+                        'acceptance_rate': acceptance_rate
+                    })
+        
+        if acceptance_data:
+            total_accepted = sum(d['accepted_submissions'] for d in acceptance_data)
+            total_submissions_all = sum(d['total_submissions'] for d in acceptance_data)
+            overall_rate = round((total_accepted / total_submissions_all * 100), 1) if total_submissions_all > 0 else 0
+        else:
+            overall_rate = 0
+        
+        return jsonify({
+            'roll': roll,
+            'acceptance_data': acceptance_data,
+            'overall_rate': overall_rate
+        })
+        
+    except Exception as e:
+        print(f"Acceptance API Error: {e}")
+        return jsonify({'error': str(e), 'acceptance_data': []}), 500
+# ===============================
+
+
 
 #############################################################
 # ===============================
